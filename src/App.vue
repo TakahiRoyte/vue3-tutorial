@@ -1,59 +1,39 @@
 <script>
+import TodoAdd from './components/TodoAdd.vue'
+import TodoList from './components/TodoList.vue'
+
 export default {
+  components: {
+    TodoAdd,
+    TodoList,
+  },
   data() {
     return {
-      title: 'My New Vue Title',
-      message: 'Welcome to Vue',
-      isRed: true,
-      input: {
-        firstName: '',
-        lastName: '',
-        isMember: true,
-      },
-      users: [
-        {
-          firstName: 'John',
-          lastName: 'Smith',
-          isMember: true,
-        },
-        {
-          firstName: 'Taro',
-          lastName: 'Shinjuku',
-          isMember: false,
-        },
-        {
-          firstName: 'Hanako',
-          lastName: 'Shibuya',
-          isMember: true,
-        },
+      todos: [
+        //{ isDone: false, text: 'ToDoの文字列' }
       ],
     }
   },
   methods: {
-    addUser() {
-      this.users.push(this.input)
-      this.input = {
-        firstName: '',
-        lastName: '',
-        isMember: true,
-      }
+    addTodo(newTodoText) {
+      if (!newTodoText) return alert('文字を入力してください')
+      this.todos.push({
+        isDone: false,
+        text: newTodoText,
+      })
+    },
+    clearDoneTodos() {
+      this.todos = this.todos.filter((todo) => !todo.isDone)
     },
   },
 }
 </script>
 
 <template>
-  <h1 :title="message" :class="{ red: isRed }">{{ title }}</h1>
-  <input type="text" v-model="input.firstName" />
-  <input type="text" v-model="input.lastName" />
-  <input type="checkbox" v-model="input.isMember" />
-  <button v-on:click="addUser">ユーザー追加</button>
-  <h2>ユーザーのデータ</h2>
-  <div v-for="user in users">
-    <p>Name: {{ user.firstName + ' ' + user.lastName }}</p>
-    <p v-if="user.isMember">メンバーです</p>
-    <p v-else>メンバーではありません</p>
-  </div>
+  <h1>My ToDo App</h1>
+  <TodoAdd @delete-done="clearDoneTodos" @add-todo="addTodo" />
+  <p v-if="todos.length === 0">ToDoがまだありません！</p>
+  <TodoList v-else :todos="todos" />
 </template>
 
 <style>
@@ -61,7 +41,7 @@ body {
   background-color: #eee;
 }
 
-.red {
-  color: red;
+.todo-done {
+  text-decoration: line-through;
 }
 </style>
